@@ -39,6 +39,7 @@ def wait_until_title_is(browser, title, timeout=10):
 def login(browser):
     wait_until_clickable(browser, (By.NAME, 'email')).send_keys("qa_test@test.ru")
     wait_until_clickable(browser, (By.NAME, 'password')).send_keys("!QAZ2wsx")
+    wait_until_clickable(browser, (By.CSS_SELECTOR, '[type = "checkbox"]')).click()
     wait_until_clickable(browser, (By.CLASS_NAME, 'button')).click()
 
 
