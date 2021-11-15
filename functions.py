@@ -1,3 +1,4 @@
+from webbrowser import Chrome
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -36,11 +37,10 @@ def wait_until_title_is(browser, title, timeout=10):
     return WebDriverWait(browser, timeout).until(ec.title_is(title))
 
 
-def login(browser):
-    wait_until_clickable(browser, (By.NAME, 'email')).send_keys("qa_test@test.ru")
-    wait_until_clickable(browser, (By.NAME, 'password')).send_keys("!QAZ2wsx")
-    wait_until_clickable(browser, (By.CSS_SELECTOR, '[type = "checkbox"]')).click()
-    wait_until_clickable(browser, (By.CLASS_NAME, 'button')).click()
+def login_ui(browser: Chrome, email: str, password: str) -> None:
+    wait_until_clickable(browser, (By.NAME, "email")).send_keys(email)
+    wait_until_clickable(browser, (By.NAME, "password")).send_keys(password)
+    wait_until_clickable(browser, (By.CLASS_NAME, "button")).click()
 
 
 def element_is_present(browser, by, value):
@@ -49,4 +49,3 @@ def element_is_present(browser, by, value):
         return True
     except TimeoutException:
         return False
-
