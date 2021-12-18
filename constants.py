@@ -1,15 +1,17 @@
+# constants.py
 PARAMS_FOR_NEGATIVE_AUTH = [("", "!QAZ2wsx"), ("qa_test@test.ru", ""), ("qa_test.ru", "!QAZ2wsx"),
                             ("my_little_ponny@test.ru", "!QAZ2wsx")]
-PARAMS_FOR_POSITIVE_AUTH = {"email": "qa_test@test.ru",
-                            "password": "!QAZ2wsx"}
+PARAMS_FOR_POSITIVE_AUTH = {"email": "api_user_6@test.ru",
+                            "password": "q6w6e6"}
 
 
 class Links:
-    base_url = "https://qastand.valhalla.pw/"
-    login = base_url + "login"
-    profile = base_url + "profile"
-    blog = base_url + "blog"
-    post_user2 = blog + "/author/2/"
+    url = {"prod": "https://qastand.valhalla.pw/",
+           "stage": "https://qastand-dev.valhalla.pw/"}
+    login = "login"
+    profile = "profile"
+    blog = "blog"
+    post_user2 = "blog/author/2/"
 
 
 SESSION_COOKIE = {'name': 'session',

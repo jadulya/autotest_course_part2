@@ -1,16 +1,14 @@
+# functions.py
+from typing import Tuple
 from webbrowser import Chrome
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 
 
 def wait_until_clickable(browser, locator, timeout=10):
     return WebDriverWait(browser, timeout).until(ec.element_to_be_clickable(locator))
-
-
-def wait_until_visible(browser, locator, timeout=10):
-    return WebDriverWait(browser, timeout).until(ec.visibility_of_element_located(locator))
 
 
 def wait_until_all_elements_visible(browser, locator, timeout=10):
@@ -43,9 +41,13 @@ def login_ui(browser: Chrome, email: str, password: str) -> None:
     wait_until_clickable(browser, (By.CLASS_NAME, "button")).click()
 
 
-def element_is_present(browser, by, value):
+def wait_until_visible(driver: Chrome, locator: Tuple, timeout: int = 5) -> None:
+    return WebDriverWait(driver, timeout).until(ec.visibility_of_element_located(locator))
+
+
+def element_is_present(browser: Chrome, locator: Tuple, timeout: int = 5) -> bool:
     try:
-        wait_until_visible(browser, (by, value))
+        wait_until_visible(browser, locator, timeout)
         return True
     except TimeoutException:
         return False
