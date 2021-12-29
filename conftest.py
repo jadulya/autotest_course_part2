@@ -4,6 +4,7 @@ import random
 import pytest
 from selenium.webdriver import Chrome
 
+from api.api_client import Client
 from constants import Links
 
 
@@ -17,6 +18,13 @@ def url(request):
     return url
 
 
+@pytest.fixture()
+def login(browser, url):
+    cookie = Client(url).auth()
+    browser.get(url)
+    browser.add_cookie({"name": "session", "value": cookie["session"]})
+
+
 def pytest_configure(config):
     config.addinivalue_line(
         "markers", "auth: tests for auth testing"
@@ -26,7 +34,7 @@ def pytest_configure(config):
     )
 
 
-def pytest_addoption(parser):
+def pytest_add_option(parser):
     parser.addoption(
         "--env", default="prod"
     )
@@ -43,4 +51,3 @@ def browser():
     browser.maximize_window()
     yield browser
     browser.quit()
-
