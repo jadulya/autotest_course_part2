@@ -1,11 +1,18 @@
 # conftest.py
 import random
-
 import pytest
-from selenium.webdriver import Chrome
 
+from selenium.webdriver import Remote
+from constants import Links, VALID_BROWSERS, BROWSER_REMOTE_CAPABILITIES, COMMAND_EXECUTOR
 from api.api_client import Client
-from constants import Links
+
+
+@pytest.fixture()
+def browser():
+    browser = Remote()
+    browser.maximize_window()
+    yield browser
+    browser.quit()
 
 
 @pytest.fixture(scope="session")
@@ -18,13 +25,6 @@ def url(request):
     return url
 
 
-@pytest.fixture()
-def login(browser, url):
-    cookie = Client(url).auth()
-    browser.get(url)
-    browser.add_cookie({"name": "session", "value": cookie["session"]})
-
-
 def pytest_configure(config):
     config.addinivalue_line(
         "markers", "auth: tests for auth testing"
@@ -34,20 +34,34 @@ def pytest_configure(config):
     )
 
 
-def pytest_add_option(parser):
-    parser.addoption(
-        "--env", default="prod"
-    )
-
-
 @pytest.fixture(scope='session', autouse=True)
 def faker_seed():
     return random.randint(0, 9999)
 
 
 @pytest.fixture()
-def browser():
-    browser = Chrome()
+def login(browser, url):
+    cookie = Client(url).auth()
+    browser.get(url)
+    browser.add_cookie({"name": "session", "value": cookie["session"]})
+
+
+@pytest.fixture()
+def browser(request):
+    launch = request.config.getoption("--launch")
+    if launch == 'remote':
+        browser = VALID_BROWSERS[launch](command_executor=COMMAND_EXECUTOR,
+                                         desired_capabilities=BROWSER_REMOTE_CAPABILITIES)
+    else:
+        browser = VALID_BROWSERS[launch]()
     browser.maximize_window()
     yield browser
     browser.quit()
+
+
+def pytest_add_option(parser):
+    parser.addoption(
+        "--env", default="prod"
+    )
+    parser.addoption(
+        "--launch", default="chrome", choices=["chrome", "opera", "remote"])
